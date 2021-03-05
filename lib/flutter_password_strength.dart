@@ -9,13 +9,13 @@ class FlutterPasswordStrength extends StatefulWidget {
   final String password;
 
   //Strength bar width
-  final double width;
+  final double? width;
 
   //Strength bar height
   final double height;
 
   //Strength bar colors are changed depending on strength
-  final Animatable<Color> strengthColors;
+  final Animatable<Color>? strengthColors;
 
   //Strength bar background color
   final Color backgroundColor;
@@ -24,14 +24,14 @@ class FlutterPasswordStrength extends StatefulWidget {
   final double radius;
 
   //Strength bar animation duration
-  final Duration duration;
+  final Duration? duration;
 
   //Strength callback
-  final void Function(double strength) strengthCallback;
+  final void Function(double strength)? strengthCallback;
 
   const FlutterPasswordStrength(
-      {Key key,
-      @required this.password,
+      {Key? key,
+      required this.password,
       this.width,
       this.height = 5,
       this.strengthColors,
@@ -49,9 +49,9 @@ class FlutterPasswordStrength extends StatefulWidget {
     0.51 ~ 0.75 : blue
     0.76 ~ 1 : green
   */
-  Animatable<Color> get _strengthColors => strengthColors != null
+  Animatable<Color?>? get _strengthColors => (strengthColors != null
       ? strengthColors
-      : TweenSequence<Color>(
+      : TweenSequence<Color?>(
           [
             TweenSequenceItem(
               weight: 1.0,
@@ -75,10 +75,10 @@ class FlutterPasswordStrength extends StatefulWidget {
               ),
             ),
           ],
-        );
+        )) as Animatable<Color?>?;
 
   //default duration is 300 milliseconds
-  Duration get _duration =>
+  Duration? get _duration =>
       duration != null ? duration : Duration(milliseconds: 300);
 
   @override
@@ -89,31 +89,31 @@ class FlutterPasswordStrength extends StatefulWidget {
 class _FlutterPasswordStrengthState extends State<FlutterPasswordStrength>
     with SingleTickerProviderStateMixin {
   //Animation controller for strength bar
-  AnimationController _animationController;
+  late AnimationController _animationController;
 
   //Animation for strength bar sharp
-  Animation<double> _strengthBarAnimation;
+  late Animation<double> _strengthBarAnimation;
 
   //Strength bar colors
-  Animatable<Color> _strengthBarColors;
+  Animatable<Color?>? _strengthBarColors;
 
   //Strength bar color from the list of strength bar colors
-  Color _strengthBarColor;
+  Color? _strengthBarColor;
 
   //Strength bar color
-  Color _backgroundColor;
+  Color? _backgroundColor;
 
   //Strength bar width
-  double _width;
+  double? _width;
 
   //Strength bar height
-  double _height;
+  double? _height;
 
   //Strength bar raidus, default is 0
   double _radius = 0;
 
   //Strength callback
-  void Function(double strength) _strengthCallback;
+  void Function(double strength)? _strengthCallback;
 
   //_begin is used in _strengthBarAnimation
   double _begin = 0;
@@ -135,7 +135,7 @@ class _FlutterPasswordStrengthState extends State<FlutterPasswordStrength>
         Tween<double>(begin: _begin, end: _end).animate(_animationController);
     _strengthBarColors = widget._strengthColors;
     _strengthBarColor =
-        _strengthBarColors.evaluate(AlwaysStoppedAnimation(_passwordStrength));
+        _strengthBarColors!.evaluate(AlwaysStoppedAnimation(_passwordStrength));
 
     _backgroundColor = widget.backgroundColor;
 
@@ -158,12 +158,12 @@ class _FlutterPasswordStrengthState extends State<FlutterPasswordStrength>
     _strengthBarAnimation =
         Tween<double>(begin: _begin, end: _end).animate(_animationController);
     _strengthBarColor =
-        _strengthBarColors.evaluate(AlwaysStoppedAnimation(_passwordStrength));
+        _strengthBarColors!.evaluate(AlwaysStoppedAnimation(_passwordStrength));
 
     _animationController.forward(from: 0.0);
 
     if (_strengthCallback != null) {
-      _strengthCallback(_passwordStrength);
+      _strengthCallback!(_passwordStrength);
     }
   }
 
@@ -195,24 +195,24 @@ class _FlutterPasswordStrengthState extends State<FlutterPasswordStrength>
 }
 
 class StrengthBarContainer extends AnimatedWidget {
-  final Color barColor;
-  final Color backgroundColor;
-  final double width;
-  final double height;
-  final double radius;
+  final Color? barColor;
+  final Color? backgroundColor;
+  final double? width;
+  final double? height;
+  final double? radius;
 
   const StrengthBarContainer(
-      {Key key,
+      {Key? key,
       this.barColor,
       this.backgroundColor,
       this.width,
       this.height,
       this.radius,
-      Animation animation})
+      required Animation animation})
       : super(key: key, listenable: animation);
 
   Animation<double> get _percent {
-    return listenable;
+    return listenable as Animation<double>;
   }
 
   @override
@@ -221,7 +221,7 @@ class StrengthBarContainer extends AnimatedWidget {
         builder: (BuildContext context, BoxConstraints constraints) {
       return Container(
           child: CustomPaint(
-              size: Size(width ?? constraints.maxWidth, height),
+              size: Size(width ?? constraints.maxWidth, height!),
               painter: StrengthBarBackground(
                   backgroundColor: backgroundColor, backgroundRadius: radius),
               foregroundPainter: StrengthBar(
@@ -233,9 +233,9 @@ class StrengthBarContainer extends AnimatedWidget {
 }
 
 class StrengthBar extends CustomPainter {
-  Color barColor;
-  double barRadius;
-  double percent;
+  Color? barColor;
+  double? barRadius;
+  double? percent;
 
   StrengthBar({this.barColor, this.barRadius, this.percent});
 
@@ -246,18 +246,18 @@ class StrengthBar extends CustomPainter {
 
   void drawBar(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = barColor
+      ..color = barColor!
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.round;
 
     double left = 0;
     double top = 0;
-    double right = size.width / 100 * percent;
+    double right = size.width / 100 * percent!;
     double bottom = size.height;
 
     //the bar width needs to be bigger than radius width
-    if (barRadius != null && right > 0 && barRadius * 2 > right) {
-      right = barRadius * 2;
+    if (barRadius != null && right > 0 && barRadius! * 2 > right) {
+      right = barRadius! * 2;
     }
 
     canvas.drawRRect(
@@ -275,8 +275,8 @@ class StrengthBar extends CustomPainter {
 }
 
 class StrengthBarBackground extends CustomPainter {
-  Color backgroundColor;
-  double backgroundRadius;
+  Color? backgroundColor;
+  double? backgroundRadius;
 
   StrengthBarBackground({this.backgroundColor, this.backgroundRadius});
 
@@ -287,7 +287,7 @@ class StrengthBarBackground extends CustomPainter {
 
   void drawBarBackground(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = backgroundColor
+      ..color = backgroundColor!
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.round;
 

@@ -14,7 +14,6 @@ class PasswordField extends StatefulWidget {
 
 class _PasswordFieldState extends State<PasswordField> {
   String _password;
-  bool _isPasswordDirty = false;
 
   String validatePassword(String value) {
     if (value.isEmpty) {
@@ -29,15 +28,12 @@ class _PasswordFieldState extends State<PasswordField> {
 
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: _password,
       keyboardType: TextInputType.text,
       obscureText: true,
       validator: validatePassword,
-      autovalidate: _isPasswordDirty,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       onChanged: (value) {
-        setState(() {
-          _isPasswordDirty = true;
-        });
-
         widget.onChanged(value);
       },
       onSaved: (value) {
@@ -48,8 +44,9 @@ class _PasswordFieldState extends State<PasswordField> {
         widget.onSaved(value);
       },
       decoration: InputDecoration(
-          helperText: 'required',
-          labelText: 'Password'),
+        helperText: 'required',
+        labelText: 'Password',
+      ),
     );
   }
 }

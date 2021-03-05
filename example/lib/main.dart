@@ -26,8 +26,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _password;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: SignInForm()
+        child: SignInForm(),
       ),
     );
   }
